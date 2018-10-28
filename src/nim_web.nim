@@ -16,7 +16,9 @@ proc startPoint(req: Request) {.async, gcsafe.} =
     # First, build the ctx object
     echo(req)
     var ctx = contextHelper.parseRequest(req)
-    ctx.response = ctx.getGET("myquery")
+    contextHelper.includeContainer(ctx, container)
+
+    ctx.response = "No response :O"
 
     # Second, route it!
     container.getRouter().execRouting(ctx)

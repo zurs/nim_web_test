@@ -1,5 +1,6 @@
 import asynchttpserver, tables, strutils
 
+import serviceContainer
 
 type
     RequestContext* = ref object
@@ -8,6 +9,7 @@ type
         httpMethod*: HttpMethod
         data: Table[string, string]
         response*: string
+        container: ServiceContainer 
 
 
 proc parseRequest*(req: Request): RequestContext =
@@ -22,6 +24,15 @@ proc parseRequest*(req: Request): RequestContext =
             let separatedPair = split(pair, '=')
             newContext.data[separatedPair[0]] = separatedPair[1]
     return newContext
+
+proc includeContainer*(ctx: var RequestContext, container: var ServiceContainer) =
+    ctx.container = container
+
+proc getContainer*(ctx: var RequestContext): ServiceContainer =
+    if ctx.container.isNil:
+        return nil
+    return ctx.container
+
 
 proc getPOST*(ctx: RequestContext, key: string): string =
     if ctx.data.hasKey(key):
