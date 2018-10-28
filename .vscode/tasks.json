@@ -6,7 +6,7 @@
         {
             "label": "Run nim_web",
             "type": "shell",
-            "command": "nim c -r -o:bin/nim_web --threads:On src/nim_web.nim",
+            "command": "nim c -r -o:bin/nim_web src/nim_web.nim",
             "group": {
                 "kind": "build",
                 "isDefault": true

@@ -1,16 +1,25 @@
-import asynchttpserver, asyncdispatch, tables
+import asynchttpserver, asyncdispatch, tables, re, sugar
 
-import contextBuilder, router
+import contextHelper, routerService, serviceContainer, routes
 
 var server = newAsyncHttpServer()
 
-proc startPoint(req: Request) {.async.} =
+var container = newServiceContainer() 
+
+var someRoute = Route(regexp: re"(/)", routeProc: proc(myCtx: var RequestContext) = 
+    myCtx.response = "Yolo"
+)
+
+routes.addRoutes(container.getRouter())
+
+proc startPoint(req: Request) {.async, gcsafe.} =
     # First, build the ctx object
-    var ctx = contextBuilder.parseRequest(req)
+    echo(req)
+    var ctx = contextHelper.parseRequest(req)
     ctx.response = ctx.getGET("myquery")
 
     # Second, route it!
-
+    container.getRouter().execRouting(ctx)
 
     await req.respond(Http200, ctx.response)
 
